@@ -18,3 +18,23 @@
    */
 
 <img width="1285" height="791" alt="image" src="https://github.com/user-attachments/assets/90dcbeea-4e56-4af6-be36-2d6bde932e16" />
+
+
+2. LMS - LIBRARY MANAGEMENT SYSTEM
+   
+   /* * A SIMPLE LIBRARY MANAGEMENT SYSTEM WITH BELOW FEATURS
+      * 1. Add books
+      * 2. Display books
+      * 3. Remove books
+      * 4. Search books
+      * 5. Add Members
+      * 6. Remove Members
+      * 7. Display Members
+      * 8. Issue Books
+      * 9. Return books
+      * 10. Check book availability
+      * 11. Track Issues
+      * 12. Exit
+   */
+
+<img width="411" height="484" alt="image" src="https://github.com/user-attachments/assets/50a6e613-6059-4717-98d0-84453defe16f" />
