@@ -1,0 +1,3 @@
+[ IT119, Balaji.S, Information Technology, First, Marks={Tam=99, Mat=99, Soc=99, Sci=99, Eng=90} ]
+[ IT130, Dharineesh, Information Technology, Two, Marks={Tam=96, Mat=94, Soc=78, Sci=90, Eng=90} ]
+[ ]
