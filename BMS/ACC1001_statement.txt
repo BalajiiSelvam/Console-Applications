@@ -1,6 +1,4 @@
-===== ACCOUNT STATEMENT =====
-{ AccNo: ACC1001, Name: BalajiSelvam, Type: Savings, Balance: 10000.0, Contact: 9878909878 }
-Transactions:
-[AccNo: ACC1001, Account Opened : 10000.0, Balance: 10000.0, Time: 2025-09-30T13:17:09.751279662]
-[AccNo: ACC1001, Withdraw : 5000.0, Balance: 5000.0, Time: 2025-09-30T13:18:35.065759179]
-[AccNo: ACC1001, Transfer Received : 5000.0, Balance: 10000.0, Time: 2025-09-30T13:19:14.035315578]
+{AccNo: ACC1001, Name: BalajiSelvam, Type: Savings, Balance: 10500.0}
+[AccNo: ACC1001, Deposit : 10000.0, BalanceAfter: 20000.0, Time: 2025-09-30T13:45:52.059603539]
+[AccNo: ACC1001, Withdraw : 10000.0, BalanceAfter: 10000.0, Time: 2025-09-30T13:46:07.961197497]
+[AccNo: ACC1001, Transfer From ACC1002 : 500.0, BalanceAfter: 10500.0, Time: 2025-09-30T13:46:34.849813710]
