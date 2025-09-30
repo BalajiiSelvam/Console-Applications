@@ -5,6 +5,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+/* * A SIMPLE LIBRARY MANAGEMENT SYSTEM WITH BELOW FEATURS
+   * 1. Add books
+   * 2. Display books
+   * 3. Remove books
+   * 4. Search books
+   * 5. Add Members
+   * 6. Remove Members
+   * 7. Display Members
+   * 8. Issue Books
+   * 9. Return books
+   * 10. Check book availability
+   * 11. Track Issues
+   * 12. Exit
+*/
 //BOOKS
 class Book{
     String bookId;
