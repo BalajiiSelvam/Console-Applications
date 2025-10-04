@@ -9,7 +9,6 @@ class Transaction {
     double amount;
     double balanceAfter;
     LocalDateTime timestamp;
-
     public Transaction(String accountNumber, String type, double amount, double balanceAfter) {
         this.accountNumber = accountNumber;
         this.type = type;
@@ -17,14 +16,12 @@ class Transaction {
         this.balanceAfter = balanceAfter;
         this.timestamp = LocalDateTime.now();
     }
-
     @Override
     public String toString() {
         return "[AccNo: " + accountNumber + ", " + type + " : " + amount + ", BalanceAfter: " + balanceAfter +
                ", Time: " + timestamp + "]";
     }
 }
-
 class Account {
     String accountNumber;
     String name;
@@ -33,7 +30,6 @@ class Account {
     String contact;
     String pin;
     boolean isAdmin;
-
     public Account(String accountNumber, String name, String type, double balance, String contact, String pin, boolean isAdmin) {
         this.accountNumber = accountNumber;
         this.name = name;
@@ -43,7 +39,6 @@ class Account {
         this.pin = pin;
         this.isAdmin = isAdmin;
     }
-
     @Override
     public String toString() {
         return "{AccNo: " + accountNumber + ", Name: " + name + ", Type: " + type + ", Balance: " + balance + "}";
