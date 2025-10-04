@@ -48,3 +48,6 @@ Variables :
 	|-- otp
 	|-- expiry time
 Constructor : ( Parameterized )
+
+<img width="519" height="795" alt="image" src="https://github.com/user-attachments/assets/adaa65e3-6849-4449-a7cd-6413263787fc" />
+
