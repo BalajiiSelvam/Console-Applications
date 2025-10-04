@@ -345,7 +345,7 @@ public class Bms{
     void main(){
         Scanner sc = new Scanner(System.in);
         Bank b = new Bank();
-
+        
         String type = IO.readln("Enter type (User/Admin) : ");
         if(type.equalsIgnoreCase("User")){
             while(true){
