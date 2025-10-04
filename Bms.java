@@ -45,15 +45,10 @@ class Transaction{
         this.timestamp = LocalDateTime.now();
     }
 
-    @Override
-    public String toString(){
-        if(type.equalsIgnoreCase("Deposit")){
-            return "Amount " + amount + " deposited to" + accountNumber + ". Balance : " + balanceAfter + "\n";
-        }
-        else if(type.equalsIgnoreCase("Withdrawn")){
-            return "Amount " + amount + " withdrawn from " + accountNumber + ". Balance : " + balanceAfter + "\n";
-        }
-        return "Amount " + amount + " transfer Successful. Balance " + balanceAfter + "\n";
+  @Override
+    public String toString() {
+        return "[ AccNo: " + accountNumber + ", " + type + " : " + amount + ", BalanceAfter: " + balanceAfter +
+               ", Time: " + timestamp + "]";
     }
 
 }
@@ -198,6 +193,29 @@ class Bank{
         }
         IO.println("Current Balance : "  + acc1.balance);
     }
+
+    //TRANSACTION HISTORY
+    public void transactionHistory() {
+        String accN = IO.readln("Enter Acc Num : ");
+        Account acc = findAccount(accN);
+        if(acc==null || acc.isAdmin){
+            IO.println("Invalid Account");
+            return;
+        }
+        String pin = IO.readln("Enter PIN : ");
+        if(!verifyPin(acc, pin)){
+            IO.println("Invalid PIN");
+            return;
+        }
+        IO.println("---------------------------------- TRANSACTION HISTORY ----------------------------------\n");
+        for(Transaction t : transactions){
+            if(t.accountNumber.equals(accN)){
+                System.out.printf("AccNo: %-12s Type: %-10s Amount: %-10s BalanceAfter: %-10s Time: %-20s%n",
+                  t.accountNumber, t.type, t.amount, t.balanceAfter, t.timestamp);
+
+            }
+        }
+    }
 }
 
 //BMS class
@@ -213,7 +231,8 @@ public class Bms{
             IO.println("4. Withdraw");
             IO.println("5. Transfer");
             IO.println("6. Check Balance");
-            IO.println("7. Exit");
+            IO.println("7. View Transactions");
+            IO.println("8. Exit");
 
             int choice = Integer.parseInt(IO.readln("Enter your choice : "));
             switch(choice){
@@ -223,7 +242,8 @@ public class Bms{
                 case 4 -> b.withdraw();
                 case 5 -> b.transfer();
                 case 6 -> b.checkBalance();
-                case 7 -> { IO.println("Bye Bye ...\n"); return; }
+                case 7 -> b.transactionHistory();
+                case 8 -> { IO.println("Bye Bye ...\n"); return; }
                 default -> IO.println("Invalid choice");
             }
         }
