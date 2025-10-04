@@ -299,7 +299,7 @@ class Bank{
 }
 
 // CLASS BANKSYSTEM
-public class BankSystem{
+public class BMSWithOTP{
     public static void main(String[] args) {
         Bank b = new Bank();
         Scanner scan = new Scanner(System.in);
