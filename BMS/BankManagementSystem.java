@@ -9,6 +9,7 @@ class Transaction {
     double amount;
     double balanceAfter;
     LocalDateTime timestamp;
+
     public Transaction(String accountNumber, String type, double amount, double balanceAfter) {
         this.accountNumber = accountNumber;
         this.type = type;
@@ -16,29 +17,31 @@ class Transaction {
         this.balanceAfter = balanceAfter;
         this.timestamp = LocalDateTime.now();
     }
+
     @Override
     public String toString() {
         return "[AccNo: " + accountNumber + ", " + type + " : " + amount + ", BalanceAfter: " + balanceAfter +
                ", Time: " + timestamp + "]";
     }
 }
+
 class Account {
     String accountNumber;
     String name;
-    String type;       // Savings / Current / Admin
+    String type;       // Savings / Current
     double balance;
     String contact;
     String pin;
-    boolean isAdmin;
-    public Account(String accountNumber, String name, String type, double balance, String contact, String pin, boolean isAdmin) {
+
+    public Account(String accountNumber, String name, String type, double balance, String contact, String pin) {
         this.accountNumber = accountNumber;
         this.name = name;
         this.type = type;
         this.balance = balance;
         this.contact = contact;
         this.pin = pin;
-        this.isAdmin = isAdmin;
     }
+
     @Override
     public String toString() {
         return "{AccNo: " + accountNumber + ", Name: " + name + ", Type: " + type + ", Balance: " + balance + "}";
@@ -51,34 +54,32 @@ class Bank {
     List<Transaction> transactions = new ArrayList<>();
     Scanner sc = new Scanner(System.in);
 
+    // OTP storage (Account -> OTP)
+    Map<String, String> otps = new HashMap<>();
+
     // ------------------ Account Creation ------------------
-    private String generateAccountNumber(boolean isAdmin) {
-        return isAdmin ? "ADMIN" + (++accCounter) : "ACC" + (++accCounter);
+    private String generateAccountNumber() {
+        return "ACC" + (++accCounter);
     }
 
-    public void openAccount(boolean isAdmin) {
+    public void openAccount() {
         System.out.print("Enter Name: ");
         String name = sc.nextLine();
 
-        String type = "User";
-        double balance = 0;
-        if (!isAdmin) {
-            System.out.print("Enter Account Type (Savings/Current): ");
-            type = sc.nextLine();
-            System.out.print("Enter Initial Deposit: ");
-            balance = sc.nextDouble();
-            sc.nextLine();
-        } else {
-            type = "Admin";
-        }
+        System.out.print("Enter Account Type (Savings/Current): ");
+        String type = sc.nextLine();
+
+        System.out.print("Enter Initial Deposit: ");
+        double balance = sc.nextDouble(); sc.nextLine();
 
         System.out.print("Enter Contact Number: ");
         String contact = sc.nextLine();
+
         System.out.print("Set a 4-digit PIN: ");
         String pin = sc.nextLine();
 
-        String accNumber = generateAccountNumber(isAdmin);
-        Account acc = new Account(accNumber, name, type, balance, contact, pin, isAdmin);
+        String accNumber = generateAccountNumber();
+        Account acc = new Account(accNumber, name, type, balance, contact, pin);
         accounts.add(acc);
         System.out.println("✅ Account Created Successfully! " + accNumber);
     }
@@ -101,13 +102,37 @@ class Bank {
         return true;
     }
 
+    // ------------------ OTP ------------------
+    private String generateOTP() {
+        Random rand = new Random();
+        return String.valueOf(1000 + rand.nextInt(9000)); // 4-digit OTP
+    }
+
+    private boolean verifyOTP(String accNo) {
+        String otp = generateOTP();
+        otps.put(accNo, otp);
+
+        System.out.println("🔐 OTP Generated for Account " + accNo + ": " + otp);
+        System.out.print("Enter OTP: ");
+        String enteredOtp = sc.nextLine();
+
+        if (otp.equals(enteredOtp)) {
+            otps.remove(accNo);
+            return true;
+        } else {
+            System.out.println("❌ Invalid OTP!");
+            return false;
+        }
+    }
+
     // ------------------ Deposit ------------------
     public void deposit() {
         System.out.print("Enter Account Number: ");
         String accNo = sc.nextLine();
         Account acc = findAccount(accNo);
-        if (acc == null || acc.isAdmin) { System.out.println("❌ Invalid Account"); return; }
+        if (acc == null) { System.out.println("❌ Invalid Account"); return; }
         if (!verifyPin(acc)) return;
+        if (!verifyOTP(accNo)) return;
 
         System.out.print("Enter Deposit Amount: ");
         double amount = sc.nextDouble(); sc.nextLine();
@@ -123,8 +148,9 @@ class Bank {
         System.out.print("Enter Account Number: ");
         String accNo = sc.nextLine();
         Account acc = findAccount(accNo);
-        if (acc == null || acc.isAdmin) { System.out.println("❌ Invalid Account"); return; }
+        if (acc == null) { System.out.println("❌ Invalid Account"); return; }
         if (!verifyPin(acc)) return;
+        if (!verifyOTP(accNo)) return;
 
         System.out.print("Enter Withdrawal Amount: ");
         double amount = sc.nextDouble(); sc.nextLine();
@@ -146,13 +172,14 @@ class Bank {
         System.out.print("Enter Sender Account Number: ");
         String fromAccNo = sc.nextLine();
         Account fromAcc = findAccount(fromAccNo);
-        if (fromAcc == null || fromAcc.isAdmin) { System.out.println("❌ Invalid Account"); return; }
+        if (fromAcc == null) { System.out.println("❌ Invalid Account"); return; }
         if (!verifyPin(fromAcc)) return;
+        if (!verifyOTP(fromAccNo)) return;
 
         System.out.print("Enter Receiver Account Number: ");
         String toAccNo = sc.nextLine();
         Account toAcc = findAccount(toAccNo);
-        if (toAcc == null || toAcc.isAdmin) { System.out.println("❌ Invalid Receiver"); return; }
+        if (toAcc == null) { System.out.println("❌ Invalid Receiver"); return; }
 
         System.out.print("Enter Amount to Transfer: ");
         double amount = sc.nextDouble(); sc.nextLine();
@@ -171,8 +198,9 @@ class Bank {
         System.out.print("Enter Account Number: ");
         String accNo = sc.nextLine();
         Account acc = findAccount(accNo);
-        if (acc == null || acc.isAdmin) { System.out.println("❌ Invalid Account"); return; }
+        if (acc == null) { System.out.println("❌ Invalid Account"); return; }
         if (!verifyPin(acc)) return;
+        if (!verifyOTP(accNo)) return;
 
         System.out.println("💰 Current Balance: " + acc.balance);
     }
@@ -182,8 +210,9 @@ class Bank {
         System.out.print("Enter Account Number: ");
         String accNo = sc.nextLine();
         Account acc = findAccount(accNo);
-        if (acc == null || acc.isAdmin) { System.out.println("❌ Invalid Account"); return; }
+        if (acc == null) { System.out.println("❌ Invalid Account"); return; }
         if (!verifyPin(acc)) return;
+        if (!verifyOTP(accNo)) return;
 
         System.out.println("📋 Last Transactions:");
         for (Transaction t : transactions) {
@@ -196,8 +225,9 @@ class Bank {
         System.out.print("Enter Account Number: ");
         String accNo = sc.nextLine();
         Account acc = findAccount(accNo);
-        if (acc == null || acc.isAdmin) { System.out.println("❌ Invalid Account"); return; }
+        if (acc == null) { System.out.println("❌ Invalid Account"); return; }
         if (!verifyPin(acc)) return;
+        if (!verifyOTP(accNo)) return;
 
         System.out.println("📄 Account Statement:");
         System.out.println(acc);
@@ -205,7 +235,7 @@ class Bank {
             if (t.accountNumber.equals(accNo)) System.out.println(t);
         }
 
-        // Export to text file (bonus)
+        // Export to text file
         System.out.print("Export statement to file? (yes/no): ");
         String resp = sc.nextLine();
         if (resp.equalsIgnoreCase("yes")) {
@@ -226,27 +256,14 @@ class Bank {
         System.out.print("Enter Account Number: ");
         String accNo = sc.nextLine();
         Account acc = findAccount(accNo);
-        if (acc == null || acc.isAdmin) { System.out.println("❌ Invalid Account"); return; }
+        if (acc == null) { System.out.println("❌ Invalid Account"); return; }
         if (!verifyPin(acc)) return;
+        if (!verifyOTP(accNo)) return;
 
         System.out.println("💰 Withdrawing remaining balance: " + acc.balance);
         acc.balance = 0;
         accounts.remove(acc);
         System.out.println("✅ Account Closed Successfully");
-    }
-
-    // ------------------ Admin View Accounts ------------------
-    public void adminViewAccounts() {
-        System.out.print("Enter Admin Account Number: ");
-        String adminAccNo = sc.nextLine();
-        Account admin = findAccount(adminAccNo);
-        if (admin == null || !admin.isAdmin) { System.out.println("❌ Invalid Admin"); return; }
-        if (!verifyPin(admin)) return;
-
-        System.out.println("📋 All Bank Accounts:");
-        for (Account acc : accounts) {
-            if (!acc.isAdmin) System.out.println(acc);
-        }
     }
 }
 
@@ -257,33 +274,29 @@ public class BankManagementSystem {
 
         while (true) {
             System.out.println("\n===== BANK MANAGEMENT SYSTEM =====");
-            System.out.println("1. Create User Account");
-            System.out.println("2. Create Admin Account");
-            System.out.println("3. Deposit");
-            System.out.println("4. Withdraw");
-            System.out.println("5. Transfer");
-            System.out.println("6. Check Balance");
-            System.out.println("7. Transaction History");
-            System.out.println("8. Account Statement");
-            System.out.println("9. Close Account");
-            System.out.println("10. Admin: View All Accounts");
-            System.out.println("11. Exit");
+            System.out.println("1. Create Account");
+            System.out.println("2. Deposit");
+            System.out.println("3. Withdraw");
+            System.out.println("4. Transfer");
+            System.out.println("5. Check Balance");
+            System.out.println("6. Transaction History");
+            System.out.println("7. Account Statement");
+            System.out.println("8. Close Account");
+            System.out.println("9. Exit");
             System.out.print("Choose Option: ");
 
             int choice = sc.nextInt(); sc.nextLine();
 
             switch (choice) {
-                case 1 -> bank.openAccount(false);
-                case 2 -> bank.openAccount(true);
-                case 3 -> bank.deposit();
-                case 4 -> bank.withdraw();
-                case 5 -> bank.transfer();
-                case 6 -> bank.checkBalance();
-                case 7 -> bank.transactionHistory();
-                case 8 -> bank.accountStatement();
-                case 9 -> bank.closeAccount();
-                case 10 -> bank.adminViewAccounts();
-                case 11 -> { System.out.println("Exiting..."); return; }
+                case 1 -> bank.openAccount();
+                case 2 -> bank.deposit();
+                case 3 -> bank.withdraw();
+                case 4 -> bank.transfer();
+                case 5 -> bank.checkBalance();
+                case 6 -> bank.transactionHistory();
+                case 7 -> bank.accountStatement();
+                case 8 -> bank.closeAccount();
+                case 9 -> { System.out.println("Exiting..."); return; }
                 default -> System.out.println("❌ Invalid Choice");
             }
         }

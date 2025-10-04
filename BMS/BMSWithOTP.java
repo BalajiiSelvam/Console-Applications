@@ -46,23 +46,11 @@ class Account {
     }
 }
 
-// ADMIN CLASS
-class Admin {
-    String username;
-    String password;
-
-    public Admin(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-}
-
 // BANK CLASS
 class Bank {
     private static int accCounter = 1000;
     List<Account> accounts = new ArrayList<>();
     Map<String, String> otps = new HashMap<>();
-    Admin admin = new Admin("admin", "admin123"); // default admin
 
     private Scanner sc = new Scanner(System.in);
 
