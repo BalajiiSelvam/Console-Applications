@@ -242,6 +242,102 @@ class Bank{
         }
     }
 
+    //VIEW ALL ACCOUNT
+    public void viewAllAccounts(){
+        String accN = IO.readln("Enter Acc Num : ");
+        Account ac = findAccount(accN);
+        if(ac==null || !ac.isAdmin){
+            IO.println("Requires Admin privilege to view all accounts");
+            return;
+        }
+        String pin = IO.readln("Enter PIN : ");
+        if(!verifyPin(ac, pin)){
+            IO.println("Invalid PIN");
+            return;
+        }
+
+        IO.println("------------------------------------- ALL USER ACCOUNTS -------------------------------------");
+        for(Account a : accounts){
+            if(!a.isAdmin) IO.println("UserName : " + a.name + ", ACC Num : " + a.accountNumber + ", Type : " + a.type + ", Contact : " + a.contact);
+        }
+        IO.println("\n Total Users : " + accounts.size());
+    }
+
+    //VIEW ALL SAVINGS ACCOUNT
+    public void viewAllSavingsAccount(){
+        String accN = IO.readln("Enter Acc Num : ");
+        Account ac = findAccount(accN);
+        if(ac==null || !ac.isAdmin){
+            IO.println("Requires Admin privilege to view all accounts");
+            return;
+        }
+        String pin = IO.readln("Enter PIN : ");
+        if(!verifyPin(ac, pin)){
+            IO.println("Invalid PIN");
+            return;
+        }
+        
+        int count = 0;
+        IO.println("------------------------------------- ALL SAVINGS ACCOUNTS -------------------------------------");
+        for(Account a : accounts){
+            if(!a.isAdmin && a.type.equalsIgnoreCase("Savings")) {
+                IO.println("UserName : " + a.name + ", ACC Num : " + a.accountNumber + ", Contact : " + a.contact);
+                count++;
+            }
+        }
+        IO.println("\n Total Savings account : " + count);
+    }
+
+    //VIEW ALL ADMINS ACCOUNT
+    public void viewAllAdmins(){
+        String accN = IO.readln("Enter Acc Num : ");
+        Account ac = findAccount(accN);
+        if(ac==null || !ac.isAdmin){
+            IO.println("Requires Admin privilege to view all accounts");
+            return;
+        }
+        String pin = IO.readln("Enter PIN : ");
+        if(!verifyPin(ac, pin)){
+            IO.println("Invalid PIN");
+            return;
+        }
+        
+        int count = 0;
+        IO.println("------------------------------------- ALL ADMINS LIST -------------------------------------");
+        for(Account a : accounts){
+            if(a.isAdmin) {
+                IO.println("UserName : " + a.name + ", ACC Num : " + a.accountNumber + ", Contact : " + a.contact);
+                count++;
+            }
+        }
+        IO.println("\n Total Admin account : " + count);
+    }
+
+    //REMOVE USER ACCOUNT
+    public void terminateUserAccount(){
+        String accN = IO.readln("Enter Admin Acc Num : ");
+        Account ac = findAccount(accN);
+        if(ac==null || !ac.isAdmin){
+            IO.println("Requires Admin privilege to view all accounts");
+            return;
+        }
+        String pin = IO.readln("Enter PIN : ");
+        if(!verifyPin(ac, pin)){
+            IO.println("Invalid PIN");
+            return;
+        }
+        String acU = IO.readln("Enter the User Acc Num to terminate : ");
+        Account accU = findAccount(acU);
+        if(accU==null || accU.isAdmin){
+            IO.println("Invalid Account");
+            return;
+        }
+        else{
+            accounts.remove(accU);
+            IO.println("ACcount  " + acU + " terminated succesfully");
+        }
+    }
+
 }
 
 //BMS class
@@ -249,31 +345,67 @@ public class Bms{
     void main(){
         Scanner sc = new Scanner(System.in);
         Bank b = new Bank();
-        while(true){
-            IO.println("==== WELCOME TO BMS ===");
-            IO.println("1. Open User account");
-            IO.println("2. Open Admin account");
-            IO.println("3. Deposit");
-            IO.println("4. Withdraw");
-            IO.println("5. Transfer");
-            IO.println("6. Check Balance");
-            IO.println("7. View Transactions");
-            IO.println("8. Download Account Statement");
-            IO.println("9. Exit");
 
-            int choice = Integer.parseInt(IO.readln("Enter your choice : "));
-            switch(choice){
-                case 1 -> b.openAccount(false);
-                case 2 -> b.openAccount(true);
-                case 3 -> b.deposit();
-                case 4 -> b.withdraw();
-                case 5 -> b.transfer();
-                case 6 -> b.checkBalance();
-                case 7 -> b.transactionHistory();
-                case 8 -> b.downloadStatement();
-                case 9 -> { IO.println("Bye Bye ...\n"); return; }
-                default -> IO.println("Invalid choice");
+        String type = IO.readln("Enter type (User/Admin) : ");
+        if(type.equalsIgnoreCase("User")){
+            while(true){
+                IO.println("\n===== WELCOME TO BMS USER PORTAL ====\n");
+                IO.println("1. Open User account");
+                IO.println("2. Open Admin account");
+                IO.println("3. Deposit");
+                IO.println("4. Withdraw");
+                IO.println("5. Transfer");
+                IO.println("6. Check Balance");
+                IO.println("7. View Transactions");
+                IO.println("8. Download Account Statement");
+                IO.println("9. Exit");
+
+                int choice = Integer.parseInt(IO.readln("Enter your choice : "));
+                switch(choice){
+                    case 1 -> b.openAccount(false);
+                    case 2 -> b.openAccount(true);
+                    case 3 -> b.deposit();
+                    case 4 -> b.withdraw();
+                    case 5 -> b.transfer();
+                    case 6 -> b.checkBalance();
+                    case 7 -> b.transactionHistory();
+                    case 8 -> b.downloadStatement();
+                    case 9 -> { 
+                                sc.close();
+                                IO.println("Bye Bye ...\n"); 
+                                return; 
+                              }
+                    default -> IO.println("Invalid choice");
+                }
             }
+        }
+        else if(type.equalsIgnoreCase("Admin")){
+            while(true){
+                IO.println("\n===== WELCOME TO BMS ADMIN PORTAL");
+                IO.println("1. View all user accounts");
+                IO.println("2. View all savings accounts");
+                IO.println("3. View Admins list");
+                IO.println("4. Terminate user account");
+
+                int choice = Integer.parseInt(IO.readln("Enter your choice : "));
+                switch(choice){
+                    case 1 -> b.viewAllAccounts();
+                    case 2 -> b.viewAllSavingsAccount();
+                    case 3 -> b.viewAllAdmins();
+                    case 4 -> b.terminateUserAccount();
+                    case 5 -> {
+                                sc.close();
+                                IO.println("Bye Bye...");
+                                return;
+                              }
+                    default -> IO.println("Invalid Choice");
+                }
+            }
+        }
+        else{
+            IO.println("Not a valid user type");
+            sc.close();
+            return;
         }
     }
 }
