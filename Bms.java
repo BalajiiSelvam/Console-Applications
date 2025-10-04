@@ -1,5 +1,6 @@
 import java.util.*;
 import java.time.*;
+import java.io.*;
 
 //ACCOUNT CLASS
 class Account{
@@ -216,6 +217,31 @@ class Bank{
             }
         }
     }
+    
+    //DOWNLOADING REPORT
+    public void downloadStatement() {
+        String accN = IO.readln("Enter Acc Num : ");
+        Account acc = findAccount(accN);
+        if(acc==null || acc.isAdmin){
+            IO.println("Invalid Account");
+            return;
+        }
+        String pin = IO.readln("Enter PIN : ");
+        if(!verifyPin(acc, pin)){
+            IO.println("Invalid PIN");
+            return;
+        }
+        try(FileWriter fw = new FileWriter(accN + "_statement.txt")){
+            fw.write(acc + "\n");
+            for(Transaction t : transactions){
+                if(t.accountNumber.equals(accN)) fw.write(t + "\n");
+            }
+            IO.println("Statement exported as " + accN + "_statement.txt");
+        }catch (IOException e) {
+                System.out.println("File Error: " + e.getMessage());
+        }
+    }
+
 }
 
 //BMS class
@@ -232,7 +258,8 @@ public class Bms{
             IO.println("5. Transfer");
             IO.println("6. Check Balance");
             IO.println("7. View Transactions");
-            IO.println("8. Exit");
+            IO.println("8. Download Account Statement");
+            IO.println("9. Exit");
 
             int choice = Integer.parseInt(IO.readln("Enter your choice : "));
             switch(choice){
@@ -243,7 +270,8 @@ public class Bms{
                 case 5 -> b.transfer();
                 case 6 -> b.checkBalance();
                 case 7 -> b.transactionHistory();
-                case 8 -> { IO.println("Bye Bye ...\n"); return; }
+                case 8 -> b.downloadStatement();
+                case 9 -> { IO.println("Bye Bye ...\n"); return; }
                 default -> IO.println("Invalid choice");
             }
         }
